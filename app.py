@@ -66,6 +66,8 @@ def sensor_callback():
                 db.set(f'lamp{idx}_error', False)
             add_lamp_time(idx)
 
+display_mac = False
+
 def display_callback():
     for idx, sens in enumerate(sensors):  
         date = datetime.datetime.min      
@@ -81,14 +83,18 @@ def display_callback():
         message = f'L{idx}: {delta.days}d {hours}h {error}'
         display.lcd_display_string(message, idx+1)
 
-    up_seconds = uptime()
-    up_days = up_seconds // (60*60*24)
-    up_hours = (up_seconds - up_days) // 3600
-    up_minutes = (up_seconds - (up_hours * 3600)) // 60
-    display.lcd_display_string(f'UP {int(up_days)}d {int(up_hours)}:{int(up_minutes)} {mac}', 4)
+    if display_mac:
+        display.lcd_display_string(f'Serial: {mac}', 4)
+    else:
+        up_seconds = uptime()
+        up_days = up_seconds // (60*60*24)
+        up_hours = (up_seconds - up_days) // 3600
+        up_minutes = (up_seconds - (up_hours * 3600)) // 60
+        display.lcd_display_string(f'UP {int(up_days)}d {int(up_hours)}:{int(up_minutes)}', 4)
+    display_mac = not display_mac
 
 sensor_timer = RepeatedTimer(1,sensor_callback)
-display_timer = RepeatedTimer(1, display_callback)
+display_timer = RepeatedTimer(settings.DISPLAY_UPDATE_TIME, display_callback)
 
 async def main(): 
     buzzer.beep(0.05, 0.05, 3)
