@@ -2,7 +2,9 @@ import asyncio
 import pickledb
 import datetime
 import settings
-import logging as log
+import logging
+from logging.handlers import SysLogHandler, RotatingFileHandler
+
 from timer import RepeatedTimer
 from gpiozero import Buzzer, TonalBuzzer, Button, DigitalInputDevice
 import lcddriver
@@ -13,7 +15,22 @@ from uuid import getnode as get_mac
 mac = get_mac()
 uptime = lambda start=psutil.boot_time(): time.time() - start
 
-log.basicConfig(level=log.DEBUG, format='%(asctime)s - %(message)s', filename=settings.LOG_FILENAME) 
+log = logging.getLogger(__name__)
+log.level = logging.DEBUG
+
+formatter = logging.Formatter('%(module)s[%(process)d] %(funcName)s: [%(levelname)s] %(message)s')
+
+sysloghandler = SysLogHandler(address = '/dev/log')
+sysloghandler.formatter = formatter
+sysloghandler.setLevel(logging.INFO)
+log.addHandler(sysloghandler)
+
+if(settings.LOG_FILE_NAME):
+    filehandler = RotatingFileHandler(settings.LOG_FILE_NAME, maxBytes=settings.LOG_FILE_SIZE, backupCount=settings.LOG_BACK_COUNT)        
+    filehandler.formatter = formatter
+    filehandler.setLevel(logging.DEBUG)
+    log.addHandler(filehandler)
+
 
 buzzer = Buzzer(settings.BUZZER_PIN)
 db = pickledb.load(settings.DATABASE_NAME, True)
