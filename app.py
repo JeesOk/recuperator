@@ -70,6 +70,7 @@ display_mac = False
 
 def display_callback():
     global display_mac
+    display.lcd_clear()
     for idx, sens in enumerate(sensors):  
         date = datetime.datetime.min      
         if db.exists(f'lamp{idx}_time'):
