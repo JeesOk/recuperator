@@ -61,9 +61,7 @@ errors = [False, False, False]
 
 @exception_logger
 def addSecs(date, secs):    
-    result = date + datetime.timedelta(seconds=secs)    
-    if ((result.minute % 60) == 0) and (result.second == 0):
-        buzzer.beep(0.001, 0.001, 1)
+    result = date + datetime.timedelta(seconds=secs)
     return result
 
 @exception_logger
