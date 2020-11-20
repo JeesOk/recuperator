@@ -85,7 +85,7 @@ def display_callback():
         display.lcd_display_string(message, idx+1)
 
     if display_mac:
-        display.lcd_display_string(f'Serial: {mac}', 4)
+        display.lcd_display_string(f'SN: {mac}', 4)
     else:
         up_seconds = uptime()
         up_days = up_seconds // (60*60*24)
