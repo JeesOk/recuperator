@@ -65,13 +65,19 @@ def sensor_callback():
             add_lamp_time(idx)
 
 def display_callback():
-    for idx, sens in enumerate(sensors):        
+    for idx, sens in enumerate(sensors):  
+        date = datetime.datetime.min      
         if db.exists(f'lamp{idx}_time'):
             date = db.get(f'lamp{idx}_time')
             date = datetime.datetime.fromisoformat(date)
-            delta = date - datetime.datetime.min
-            hours = delta.seconds // 3600            
-            display.lcd_display_string(f'L{idx}: {delta.days}d {hours}h', idx+1)
+        delta = date - datetime.datetime.min
+        hours = delta.seconds // 3600     
+        error = 'OK'
+        if db.exists(f'lamp{idx}_error'):
+            if db.get(f'lamp{idx}_error'):
+                error = 'ERROR'
+        message = f'L{idx}: {delta.days}d {hours}h {error}'
+        display.lcd_display_string(message, idx+1)
 
     up_seconds = uptime()
     up_days = up_seconds // (60*60*24)
