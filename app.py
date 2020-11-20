@@ -45,8 +45,8 @@ def reset_lamp_time(id):
     try:
         buzzer.beep(0.05, 0.05, 2)
         log.info(f'reset_lamp_time for id {id}')
-        db.set(f'lamp{idx}_error', False)
-        db.set(f'lamp{idx}_time', datetime.datetime.min)
+        db.set(f'lamp{id}_error', False)
+        db.set(f'lamp{id}_time', datetime.datetime.min)
     except Exception:
         log.exception('Error in reset_lamp_time method', stack_info=True)
 
