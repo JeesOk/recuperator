@@ -13,7 +13,7 @@ from uuid import getnode as get_mac
 mac = get_mac()
 uptime = lambda start=psutil.boot_time(): time.time() - start
 
-log.basicConfig(level=log.DEBUG, format='%(asctime)s - %(message)s') 
+log.basicConfig(level=log.DEBUG, format='%(asctime)s - %(message)s', filename=settings.LOG_FILENAME) 
 
 buzzer = Buzzer(settings.BUZZER_PIN)
 db = pickledb.load(settings.DATABASE_NAME, True)

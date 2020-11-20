@@ -13,3 +13,5 @@ DATABASE_NAME = 'recuperator.db.json'
 BUZZER_PIN = 23
 
 DISPLAY_UPDATE_TIME = 5
+
+LOG_FILENAME = 'recuperator.log'
