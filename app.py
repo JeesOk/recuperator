@@ -70,12 +70,12 @@ def display_callback():
             date = datetime.datetime.fromisoformat(date)
             delta = date - datetime.datetime.min
             hours = delta.seconds // 3600            
-            display.print(f'L{idx}: {delta.days}d {hours}h', display.LCD_LINES[idx])
+            display.lcd_display_string(f'L{idx}: {delta.days}d {hours}h', display.LCD_LINES[idx])
 
     up_seconds = uptime()
     up_hours = up_seconds // 3600
     up_minutes = (up_seconds - (up_hours * 3600)) // 60
-    display.print(f'UP {up_hours}h {up_minutes}m')
+    display.lcd_display_string(f'UP {up_hours}h {up_minutes}m')
 
 sensor_timer = RepeatedTimer(1,sensor_callback)
 display_timer = RepeatedTimer(10, display_callback)
