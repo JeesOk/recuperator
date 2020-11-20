@@ -13,6 +13,8 @@ import time
 from uuid import getnode as get_mac
 
 mac = get_mac()
+display_mac = False
+
 uptime = lambda start=psutil.boot_time(): time.time() - start
 
 log = logging.getLogger(__name__)
@@ -94,8 +96,6 @@ def sensor_callback():
                 db.set(f'lamp{idx}_error', False)
             add_lamp_time(idx)
 
-display_mac = False
-
 @exception_logger
 def display_callback():
     global display_mac
@@ -130,6 +130,7 @@ display_timer = RepeatedTimer(settings.DISPLAY_UPDATE_TIME, display_callback)
 @exception_logger
 async def main():
     buzzer.beep(0.05, 0.05, 3)
+    log.info('=== Application started ===')
     display.lcd_clear()
     sensor_timer.start()
     display_timer.start()
