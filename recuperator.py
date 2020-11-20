@@ -89,6 +89,7 @@ def add_lamp_time(id):
 def sensor_callback():
     for idx, sensor in enumerate(sensors):
         if sensor.value == 1:
+            if not errors[idx]:
                 set_lamp_error(idx)
         else:
             if errors[idx]:
