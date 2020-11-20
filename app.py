@@ -8,7 +8,9 @@ from gpiozero import Buzzer, TonalBuzzer, Button, DigitalInputDevice
 import lcddriver
 import psutil
 import time
+from uuid import getnode as get_mac
 
+mac = get_mac()
 uptime = lambda start=psutil.boot_time(): time.time() - start
 
 log.basicConfig(level=log.DEBUG, format='%(asctime)s - %(message)s') 
@@ -83,7 +85,7 @@ def display_callback():
     up_days = up_seconds // (60*60*24)
     up_hours = (up_seconds - up_days) // 3600
     up_minutes = (up_seconds - (up_hours * 3600)) // 60
-    display.lcd_display_string(f'UP {int(up_days)}d {int(up_hours)}h {int(up_minutes)}m', 4)
+    display.lcd_display_string(f'UP {int(up_days)}d {int(up_hours)}:{int(up_minutes)} {mac}', 4)
 
 sensor_timer = RepeatedTimer(1,sensor_callback)
 display_timer = RepeatedTimer(1, display_callback)
