@@ -6,6 +6,9 @@ import logging as log
 from timer import RepeatedTimer
 from gpiozero import Buzzer, TonalBuzzer, Button, DigitalInputDevice
 import lcddriver
+import psutil
+
+uptime = lambda start=psutil.boot_time(): time.time() - start
 
 log.basicConfig(level=log.DEBUG, format='%(asctime)s - %(message)s') 
 
@@ -68,6 +71,11 @@ def display_callback():
             delta = date - datetime.datetime.min
             hours = delta.seconds // 3600            
             display.print(f'L{idx}: {delta.days}d {hours}h', display.LCD_LINES[idx])
+
+    up_seconds = uptime()
+    up_hours = up_seconds // 3600
+    up_minutes = (up_seconds - (up_hours * 3600)) // 60
+    display.print(f'UP {up_hours}h {up_minutes}m')
 
 sensor_timer = RepeatedTimer(1,sensor_callback)
 display_timer = RepeatedTimer(10, display_callback)
