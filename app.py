@@ -5,7 +5,7 @@ import settings
 import logging as log
 from timer import RepeatedTimer
 from gpiozero import Buzzer, TonalBuzzer, Button, DigitalInputDevice
-import display.lcddriver
+import lcddriver
 
 log.basicConfig(level=log.DEBUG, format='%(asctime)s - %(message)s') 
 
