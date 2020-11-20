@@ -7,6 +7,7 @@ from timer import RepeatedTimer
 from gpiozero import Buzzer, TonalBuzzer, Button, DigitalInputDevice
 import lcddriver
 import psutil
+import time
 
 uptime = lambda start=psutil.boot_time(): time.time() - start
 
