@@ -1,9 +1,15 @@
 import asyncio
-from threading import Timer
+from timer import RepeatedTimer
 
+def sensor_callback():
+    pass
+
+sensor_timer = RepeatedTimer(1,sensor_callback)
 
 async def main():
     print('main')
+    sensor_timer.start()
+
 
 if __name__ == "__main__":
     loop = asyncio.new_event_loop()    
