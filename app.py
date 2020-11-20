@@ -2,7 +2,7 @@ import asyncio
 from timer import RepeatedTimer
 
 def sensor_callback():
-    pass
+    print('sensor_callback')
 
 sensor_timer = RepeatedTimer(1,sensor_callback)
 
@@ -16,7 +16,9 @@ if __name__ == "__main__":
     asyncio.set_event_loop(loop)
     try:        
         loop.create_task(main())
-        loop.run_forever()        
+        loop.run_forever()   
+    except KeyboardInterrupt:
+        pass     
     finally:
         loop.run_until_complete(loop.shutdown_asyncgens())
         loop.close()
