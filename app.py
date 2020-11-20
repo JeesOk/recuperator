@@ -80,7 +80,7 @@ def display_callback():
     display.lcd_display_string(f'UP {int(up_days)}d {int(up_hours)}h {int(up_minutes)}m', 4)
 
 sensor_timer = RepeatedTimer(1,sensor_callback)
-display_timer = RepeatedTimer(10, display_callback)
+display_timer = RepeatedTimer(1, display_callback)
 
 async def main(): 
     buzzer.beep(0.05, 0.05, 3)
