@@ -9,7 +9,7 @@ PIDFile=/home/pi/projects/recuperator/recuperator.pid
 WorkingDirectory=/home/pi/projects/recuperator/
 Environment=PYTHONUNBUFFERED=1
 OOMScoreAdjust=-1000
-ExecStart=/usr/bin/python3 /home/pi/projects/recuperator/app.py
+ExecStart=/usr/bin/python3 /home/pi/projects/recuperator/recuperator.py
 TimeoutSec=300
 Restart=always
 
