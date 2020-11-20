@@ -51,7 +51,7 @@ def add_lamp_time(id):
     if db.exists(f'lamp{id}_time'):
         date = datetime.datetime.fromisoformat(db.get(f'lamp{id}_time'))        
     date = addSecs(date, 1)
-    db.set(f'lamp{idx}_time', date.isoformat())
+    db.set(f'lamp{id}_time', date.isoformat())
 
 def sensor_callback():
     for idx, sensor in enumerate(sensors):
