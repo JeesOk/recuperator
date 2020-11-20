@@ -22,7 +22,7 @@ sensors = [
 buttons = [
     Button(settings.LAMP1_BUTTON_PIN, hold_time=settings.LAMP_BUTTON_HOLD_TIME),
     Button(settings.LAMP2_BUTTON_PIN, hold_time=settings.LAMP_BUTTON_HOLD_TIME),
-    Button(settings.LAMP2_BUTTON_PIN, hold_time=settings.LAMP_BUTTON_HOLD_TIME)
+    Button(settings.LAMP3_BUTTON_PIN, hold_time=settings.LAMP_BUTTON_HOLD_TIME)
 ]
 
 errors = [False, False, False]
