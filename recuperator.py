@@ -26,7 +26,7 @@ sysloghandler.setLevel(logging.INFO)
 log.addHandler(sysloghandler)
 
 if(settings.LOG_FILE_NAME):
-    filehandler = RotatingFileHandler(settings.LOG_FILE_NAME, maxBytes=settings.LOG_FILE_SIZE, backupCount=settings.LOG_BACK_COUNT)        
+    filehandler = RotatingFileHandler(settings.LOG_FILE_NAME, maxBytes=settings.LOG_FILE_SIZE, backupCount=settings.LOG_BACK_COUNT)
     filehandler.formatter = formatter
     filehandler.setLevel(logging.DEBUG)
     log.addHandler(filehandler)
@@ -50,9 +50,9 @@ buttons = [
 
 errors = [False, False, False]
 
-def addSecs(date, secs):   
+def addSecs(date, secs):
     result = datetime.datetime.min
-    try: 
+    try:
         result = date + datetime.timedelta(seconds=secs)
     except:
         log.exception('Error in addSecs method', stack_info=True)
@@ -80,7 +80,7 @@ def add_lamp_time(id):
     try:
         date = datetime.datetime.min
         if db.exists(f'lamp{id}_time'):
-            date = datetime.datetime.fromisoformat(db.get(f'lamp{id}_time'))        
+            date = datetime.datetime.fromisoformat(db.get(f'lamp{id}_time'))
         date = addSecs(date, 1)
         db.set(f'lamp{id}_time', date.isoformat())
     except Exception:
@@ -91,7 +91,7 @@ def sensor_callback():
         for idx, sensor in enumerate(sensors):
             if sensor.value == 1:
                     set_lamp_error(idx)
-            else:                
+            else:
                 if errors[idx]:
                     errors[idx] = False
                     db.set(f'lamp{idx}_error', False)
@@ -106,8 +106,8 @@ def display_callback():
 
     try:
         display.lcd_clear()
-        for idx, sens in enumerate(sensors):  
-            date = datetime.datetime.min      
+        for idx, sens in enumerate(sensors):
+            date = datetime.datetime.min
             if db.exists(f'lamp{idx}_time'):
                 date = db.get(f'lamp{idx}_time')
                 date = datetime.datetime.fromisoformat(date)
@@ -132,12 +132,10 @@ def display_callback():
     except Exception:
         log.exception('Error in display_callback method', stack_info=True)
 
-    
-
 sensor_timer = RepeatedTimer(1,sensor_callback)
 display_timer = RepeatedTimer(settings.DISPLAY_UPDATE_TIME, display_callback)
 
-async def main(): 
+async def main():
     try:
         buzzer.beep(0.05, 0.05, 3)
         display.lcd_clear()
@@ -148,16 +146,16 @@ async def main():
             btn.when_held = lambda: reset_lamp_time(idx)
     except Exception:
         log.exception('Error in main method', stack_info=True)
-    
+
 
 if __name__ == "__main__":
-    loop = asyncio.new_event_loop()    
+    loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    try:        
+    try:
         loop.create_task(main())
-        loop.run_forever()   
+        loop.run_forever()
     except KeyboardInterrupt:
-        pass     
+        pass
     finally:
         sensor_timer.stop()
         display_timer.stop()
