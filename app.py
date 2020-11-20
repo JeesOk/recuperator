@@ -74,9 +74,10 @@ def display_callback():
             display.lcd_display_string(f'L{idx}: {delta.days}d {hours}h', idx+1)
 
     up_seconds = uptime()
-    up_hours = up_seconds // 3600
+    up_days = up_seconds // (60*60*24)
+    up_hours = (up_seconds - up_days) // 3600
     up_minutes = (up_seconds - (up_hours * 3600)) // 60
-    display.lcd_display_string(f'UP {up_hours}h {up_minutes}m', 4)
+    display.lcd_display_string(f'UP {int(up_days)}d {int(up_hours)}h {int(up_minutes)}m', 4)
 
 sensor_timer = RepeatedTimer(1,sensor_callback)
 display_timer = RepeatedTimer(10, display_callback)
