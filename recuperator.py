@@ -107,12 +107,13 @@ def display_callback():
             date = db.get(f'lamp{idx}_time')
             date = datetime.datetime.fromisoformat(date)
         delta = date - datetime.datetime.min
-        hours = delta.seconds // 3600     
+        hours = delta.seconds // 3600
+        mins = (delta.seconds - (hours * 3600)) // 60
         error = 'OK'
         if db.exists(f'lamp{idx}_error'):
             if db.get(f'lamp{idx}_error'):
                 error = 'ERROR'
-        message = f'L{idx}: {delta.days}d {hours}h {error}'
+        message = f'L{idx}: {delta.days}d {hours}h {mins}m {error}'
         display.lcd_display_string(message, idx+1)
 
     if display_mac:
@@ -122,7 +123,7 @@ def display_callback():
         up_days = up_seconds // (60*60*24)
         up_hours = (up_seconds - up_days) // 3600
         up_minutes = (up_seconds - (up_hours * 3600)) // 60
-        display.lcd_display_string(f'UP {int(up_days)}d {int(up_hours):02d}h {int(up_minutes):02d}m', 4)
+        display.lcd_display_string(f'UP: {int(up_days)}d {int(up_hours):02d}h {int(up_minutes):02d}m', 4)
     display_mac = not display_mac
 
 sensor_timer = RepeatedTimer(1,sensor_callback)
