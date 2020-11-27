@@ -122,7 +122,7 @@ def display_callback():
         up_seconds = uptime()
         up_days = up_seconds // 86400
         up_hours = (up_seconds - (up_days * 86400)) // 3600
-        up_minutes = (up_seconds - (up_hours * 3600)) // 60
+        up_minutes = (up_seconds - (up_hours * 3600) - (up_days * 86400)) // 60
         display.lcd_display_string(f'UP: {int(up_days):03d}d {int(up_hours):02d}h {int(up_minutes):02d}m', 4)
     display_mac = not display_mac
 
