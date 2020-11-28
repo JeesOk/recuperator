@@ -11,6 +11,7 @@ import lcddriver
 import psutil
 import time
 from uuid import getnode as get_mac
+import shutil
 
 mac = get_mac()
 display_mac = False
@@ -32,6 +33,12 @@ if(settings.LOG_FILE_NAME):
     filehandler.formatter = formatter
     filehandler.setLevel(logging.DEBUG)
     log.addHandler(filehandler)
+
+if os.path.exists(settings.DATABASE_NAME):
+    fn = f"{datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')}_{settings.DATABASE_NAME}"
+    shutil.copyfile(settings.DATABASE_NAME, fn)
+    log.info(f'Database backed to {fn}')
+
 
 def exception_logger(func):
     def wrapper(*args, **kwargs):
