@@ -8,7 +8,7 @@ LAMP3_BUTTON_PIN = 21
 
 LAMP_BUTTON_HOLD_TIME = 3
 
-DATABASE_NAME = 'recuperator.db.json'
+DATABASE_NAME = 'recuperator.db.sqlite'
 
 BUZZER_PIN = 23
 
