@@ -158,7 +158,9 @@ async def enter_serial():
 
 
 def main():
-    global serial
+    global serial_date
+    global serial_num
+
     buzzer.beep(0.05, 0.05, 3)
     log.info('=== Application started ===')
     display.lcd_clear()
