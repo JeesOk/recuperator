@@ -10,50 +10,50 @@ import utils
 from sqlitedict import SqliteDict
 
 current_pos = 0
-num = 1
-serial = datetime.date.today()
-display_serial = True
+serial_num = 1
+serial_date = datetime.date.today()
 
 
 def btn_next(btn):
     global current_pos
-    global buttons
-    global serial
+    global serial_date
+    global serial_num
 
     current_pos = current_pos + 1
     display_enter_serial()
     if current_pos == 4:
-        db['serial'] = f"{serial.strftime('%Y%m%d')}{num:02d}"
+        db['serial_date'] = serial_date
+        db['serial_num'] = serial_num
         main()
 
 
 def btn_up(btn):
-    global serial
-    global num
+    global serial_date
+    global serial_num
 
     if current_pos == 0:
-        serial = utils.add_years(serial)
+        serial_date = utils.add_years(serial_date)
     if current_pos == 1:
-        serial = utils.add_months(serial)
+        serial_date = utils.add_months(serial_date)
     if current_pos == 2:
-        serial = utils.add_days(serial)
+        serial_date = utils.add_days(serial_date)
     if current_pos == 3:
-        num = num + 1
+        serial_num = serial_num + 1
     display_enter_serial()
 
 
 def btn_down(btn):
-    global serial
-    global num
+    global serial_date
+    global serial_num
 
     if current_pos == 0:
-        serial = utils.add_years(serial, -1)
+        serial_date = utils.add_years(serial_date, -1)
     if current_pos == 1:
-        serial = utils.add_months(serial, -1)
+        serial_date = utils.add_months(serial_date, -1)
     if current_pos == 2:
-        serial = utils.add_days(serial, -1)
+        serial_date = utils.add_days(serial_date, -1)
     if current_pos == 3:
-        num = num - 1
+        serial_num = serial_num - 1
 
     display_enter_serial()
 
@@ -72,26 +72,27 @@ errors = [False, False, False]
 
 
 def reset_lamp_time(btn):
-    id = btn.index
+    idx = btn.index
     buzzer.beep(0.05, 0.05, 2)
-    log.info(f'reset_lamp_time for id {id}')
-    db[f'lamp{id}_error'] = False
-    errors[id] = False
-    db[f'lamp{id}_time'] = datetime.datetime.min
+    log.info(f'reset_lamp_time for id {idx}')
+    db[f'lamp{idx}_error'] = False
+    errors[idx] = False
+    db[f'lamp{idx}_time'] = datetime.datetime.min
 
 
-def set_lamp_error(id):
-    db[f'lamp{id}_error'] = True
-    errors[id] = True
+def set_lamp_error(idx):
+    db[f'lamp{idx}_error'] = True
+    errors[idx] = True
     buzzer.beep(0.5, 0.5, 10)
 
 
-def add_lamp_time(id):
+def add_lamp_time(idx):
     date = datetime.datetime.min
-    if f'lamp{id}_time' in db:
-        date = db[f'lamp{id}_time']
+    key = f'lamp{idx}_time'
+    if key in db:
+        date = db[key]
     date = utils.add_seconds(date)
-    db[f'lamp{id}_time'] = date
+    db[key] = date
 
 
 def sensor_callback():
@@ -105,31 +106,25 @@ def sensor_callback():
 
 
 def display_callback():
-    global display_serial
-    display.lcd_clear()
+    # display.lcd_clear()
     for idx, sens in enumerate(sensors):
         date = datetime.datetime.min
         if f'lamp{idx}_time' in db:
             date = db[f'lamp{idx}_time']
         delta = date - datetime.datetime.min
         hours = delta.seconds // 3600
-        mins = (delta.seconds - (hours * 3600)) // 60
+        minutes = (delta.seconds - (hours * 3600)) // 60
         error = 'OK'
         if f'lamp{idx}_error' in db:
             if db[f'lamp{idx}_error']:
                 error = 'ER'
-        message = f'L{idx}: {delta.days:>3d}d {hours:>2d}h {mins:>2d}m {error}'
+        message = f'L{idx}: {delta.days:>3d}d {hours:>2d}h {minutes:>2d}m {error}'
+        message = f'{message:<20}'
         display.lcd_display_string(message, idx + 1)
 
-    if display_serial:
-        display.lcd_display_string(f'SN: {serial}', 4)
-    else:
-        up_seconds = utils.uptime()
-        up_days = up_seconds // 86400
-        up_hours = (up_seconds - (up_days * 86400)) // 3600
-        up_minutes = (up_seconds - (up_hours * 3600) - (up_days * 86400)) // 60
-        display.lcd_display_string(f'UP: {int(up_days):>3d}d {int(up_hours):>2d}h {int(up_minutes):>2d}m', 4)
-    display_serial = not display_serial
+    message = f"SN: {serial_date.strftime('%Y%m%d')}{serial_num:02d}"
+    message = f'{message:<20}'
+    display.lcd_display_string(message, 4)
 
 
 sensor_timer = RepeatedTimer(1, sensor_callback)
@@ -145,15 +140,17 @@ buttons = [
 def display_enter_serial():
     display.lcd_clear()
     display.lcd_display_string('Enter serial', 1)
+    message = ''
     if current_pos == 0:
-        display.lcd_display_string('____', 2)
+        message = '____'
     if current_pos == 1:
-        display.lcd_display_string('    __', 2)
+        message = '{:>6}'.format('__')
     if current_pos == 2:
-        display.lcd_display_string('      __', 2)
+        message = '{:>8}'.format('__')
     if current_pos == 3:
-        display.lcd_display_string('        __', 2)
-    display.lcd_display_string(f"{serial.strftime('%Y%m%d')}{num:02d}", 3)
+        message = '{:>10}'.format('__')
+    display.lcd_display_string(f'{message:<20}', 2)
+    display.lcd_display_string(f"{serial_date.strftime('%Y%m%d')}{serial_num:02d}", 3)
 
 
 async def enter_serial():
@@ -165,7 +162,9 @@ def main():
     buzzer.beep(0.05, 0.05, 3)
     log.info('=== Application started ===')
     display.lcd_clear()
-    serial = f"{serial.strftime('%Y%m%d')}{num:02d}"
+    # serial = f"{serial.strftime('%Y%m%d')}{num:02d}"
+    serial_date = db['serial_date']
+    serial_num = db['serial_num']
     sensor_timer.start()
     display_timer.start()
 
@@ -186,7 +185,7 @@ if __name__ == "__main__":
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     try:
-        if ('serial' in db) and (not db['serial'] is None):
+        if (('serial_date' in db) and (not db['serial_date'] is None)) and (('serial_num' in db) and (not db['serial_num'] is None)):
             loop.create_task(main_task())
         else:
             loop.create_task(enter_serial())
