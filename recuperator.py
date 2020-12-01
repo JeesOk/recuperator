@@ -118,7 +118,7 @@ def display_callback():
         if f'lamp{idx}_error' in db:
             if db[f'lamp{idx}_error']:
                 error = 'ER'
-        message = f'L{idx}: {delta.days:>3d}d {hours:>2d}h {minutes:>2d}m {error}'
+        message = f'L{idx+1}: {delta.days:>3d}d {hours:>2d}h {minutes:>2d}m {error}'
         message = f'{message:<20}'
         display.lcd_display_string(message, idx + 1)
 
@@ -174,7 +174,7 @@ def main():
         btn.pressed = None
 
     for idx, sensor in enumerate(sensors):
-        key = f'lamp{id}_error'
+        key = f'lamp{idx}_error'
         if key in db:
             errors[idx] = db[key]
 
