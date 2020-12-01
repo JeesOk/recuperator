@@ -34,3 +34,7 @@ LOG_FILE_NAME = 'recuperator.log'
 LOG_FILE_SIZE = 1048576
 LOG_BACK_COUNT = 10
 ```
+
+Ищет WiFi сеть "RCP" с паролем "12345678". SSH активирован.
+
+Пользователь **pi** с паролем **raspberry**
