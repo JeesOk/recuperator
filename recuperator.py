@@ -81,6 +81,7 @@ def reset_lamp_time(btn):
 
 
 def set_lamp_error(idx):
+    log.warning(f'Lamp {idx} error')
     db[f'lamp{idx}_error'] = True
     errors[idx] = True
     buzzer.beep(0.5, 0.5, 10)
@@ -167,6 +168,8 @@ def main():
     # serial = f"{serial.strftime('%Y%m%d')}{num:02d}"
     serial_date = db['serial_date']
     serial_num = db['serial_num']
+    log.info(f'Stored serial: {serial_date.strftime("%Y%m%d")}{serial_num:02d}')
+
     sensor_timer.start()
     display_timer.start()
 
@@ -177,6 +180,8 @@ def main():
         key = f'lamp{idx}_error'
         if key in db:
             errors[idx] = db[key]
+            if errors[idx]:
+                log.info(f'For lamp {idx} stored error')
 
 
 async def main_task():
