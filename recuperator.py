@@ -175,7 +175,7 @@ def main():
 
     buzzer.beep(0.05, 0.05, 3)
     log.info('=== Application started ===')
-    display.lcd_clear()
+    # display.lcd_clear()
     # serial = f"{serial.strftime('%Y%m%d')}{num:02d}"
     serial_date = db['serial_date']
     serial_num = db['serial_num']
