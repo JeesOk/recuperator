@@ -205,7 +205,7 @@ async def main_task():
 if __name__ == "__main__":
     if (('serial_date' in db) and (not db['serial_date'] is None)) and (('serial_num' in db) and (not db['serial_num'] is None)):
             main()
-        else:
+    else:
             display_enter_serial()
     while True:
         schedule.run_pending()
