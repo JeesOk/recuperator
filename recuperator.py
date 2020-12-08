@@ -128,7 +128,7 @@ def display_callback():
         message = f'L{idx+1}: {delta.days:>3d}d {hours:>2d}h {minutes:>2d}m {error}'
         message = f'{message:<20}'
         #display.lcd_display_string(message, idx + 1)
-        lcd.print_line(message, line=(idx + 1))
+        lcd.print_line(message, line=idx)
 
     message = f"SN: {serial_date.strftime('%Y%m%d')}{serial_num:02d}"
     message = f'{message:<20}'
