@@ -12,6 +12,8 @@ OOMScoreAdjust=-1000
 ExecStart=/usr/bin/python3 /home/pi/projects/recuperator/recuperator.py
 TimeoutSec=300
 Restart=always
+# CPUSchedulingPolicy=fifo
+# CPUSchedulingPriority=80
 
 [Install]
 WantedBy=multi-user.target 

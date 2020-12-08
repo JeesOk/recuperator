@@ -2,10 +2,13 @@ import asyncio
 import datetime
 import settings
 from mylog import log
-from timer import RepeatedTimer
+# from timer import RepeatedTimer
 from button import MyButton
 from gpiozero import Buzzer, DigitalInputDevice
-import lcddriver
+# import lcddriver
+import schedule
+import time
+import i2clcd
 import utils
 from sqlitedict import SqliteDict
 
@@ -60,7 +63,10 @@ def btn_down(btn):
 
 buzzer = Buzzer(settings.BUZZER_PIN)
 db = SqliteDict(settings.DATABASE_NAME, tablename='values', autocommit=True)
-display = lcddriver.lcd()
+# display = lcddriver.lcd()
+
+lcd = i2clcd.i2clcd(i2c_bus=1, i2c_addr=0x27, lcd_width=16)
+lcd.init()
 
 sensors = [
     DigitalInputDevice(settings.LAMP1_SENSOR_PIN),
@@ -121,15 +127,17 @@ def display_callback():
                 error = 'ER'
         message = f'L{idx+1}: {delta.days:>3d}d {hours:>2d}h {minutes:>2d}m {error}'
         message = f'{message:<20}'
-        display.lcd_display_string(message, idx + 1)
+        #display.lcd_display_string(message, idx + 1)
+        lcd.print_line(message, line=(idx + 1))
 
     message = f"SN: {serial_date.strftime('%Y%m%d')}{serial_num:02d}"
     message = f'{message:<20}'
-    display.lcd_display_string(message, 4)
+    # display.lcd_display_string(message, 4)
+    lcd.print_line(message, line=3)
 
 
-sensor_timer = RepeatedTimer(1, sensor_callback)
-display_timer = RepeatedTimer(settings.DISPLAY_UPDATE_TIME, display_callback)
+# sensor_timer = RepeatedTimer(1, sensor_callback)
+# display_timer = RepeatedTimer(settings.DISPLAY_UPDATE_TIME, display_callback)
 
 buttons = [
     MyButton(settings.LAMP1_BUTTON_PIN, reset_lamp_time, btn_next, 0),
@@ -139,8 +147,9 @@ buttons = [
 
 
 def display_enter_serial():
-    display.lcd_clear()
-    display.lcd_display_string('Enter serial', 1)
+    # display.lcd_clear()
+    # display.lcd_display_string('Enter serial', 1)
+    lcd.print_line('Enter serial', line=0)
     message = ''
     if current_pos == 0:
         message = '____'
@@ -150,8 +159,10 @@ def display_enter_serial():
         message = '{:>8}'.format('__')
     if current_pos == 3:
         message = '{:>10}'.format('__')
-    display.lcd_display_string(f'{message:<20}', 2)
-    display.lcd_display_string(f"{serial_date.strftime('%Y%m%d')}{serial_num:02d}", 3)
+    # display.lcd_display_string(f'{message:<20}', 2)
+    lcd.print_line(f'{message:<20}', line=1)
+    # display.lcd_display_string(f"{serial_date.strftime('%Y%m%d')}{serial_num:02d}", 3)
+    lcd.print_line(f"{serial_date.strftime('%Y%m%d')}{serial_num:02d}", line=2)
 
 
 async def enter_serial():
@@ -170,8 +181,11 @@ def main():
     serial_num = db['serial_num']
     log.info(f'Stored serial: {serial_date.strftime("%Y%m%d")}{serial_num:02d}')
 
-    sensor_timer.start()
-    display_timer.start()
+    # sensor_timer.start()
+    # display_timer.start()
+
+    schedule.every().seconds.do(sensor_callback)
+    schedule.every(settings.DISPLAY_UPDATE_TIME).seconds.do(display_callback)
 
     for idx, btn in enumerate(buttons):
         btn.pressed = None
@@ -189,18 +203,28 @@ async def main_task():
 
 
 if __name__ == "__main__":
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    try:
-        if (('serial_date' in db) and (not db['serial_date'] is None)) and (('serial_num' in db) and (not db['serial_num'] is None)):
-            loop.create_task(main_task())
+    if (('serial_date' in db) and (not db['serial_date'] is None)) and (('serial_num' in db) and (not db['serial_num'] is None)):
+            main()
         else:
-            loop.create_task(enter_serial())
-        loop.run_forever()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        sensor_timer.stop()
-        display_timer.stop()
-        loop.run_until_complete(loop.shutdown_asyncgens())
-        loop.close()
+            display_enter_serial()
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+    
+
+
+    # loop = asyncio.new_event_loop()
+    # asyncio.set_event_loop(loop)
+    # try:
+    #     if (('serial_date' in db) and (not db['serial_date'] is None)) and (('serial_num' in db) and (not db['serial_num'] is None)):
+    #         loop.create_task(main_task())
+    #     else:
+    #         loop.create_task(enter_serial())
+    #     loop.run_forever()
+    # except KeyboardInterrupt:
+    #     pass
+    # finally:
+    #     sensor_timer.stop()
+    #     display_timer.stop()
+    #     loop.run_until_complete(loop.shutdown_asyncgens())
+    #     loop.close()

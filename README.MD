@@ -4,6 +4,8 @@
 sudo apt install python3-gpiozero python3-smbus python3-pip
 sudo pip3 install python-dateutil
 sudo pip3 install psutil
+sudo pip3 install i2clcd
+sudo pip3 install schedule
 
 sudo cp recuperator.service /etc/systemd/system/
 sudo systemctl daemon-reload
