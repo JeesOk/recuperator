@@ -1,5 +1,5 @@
 from dateutil.relativedelta import relativedelta
-import psutil
+# import psutil
 import time
 
 
@@ -27,14 +27,14 @@ def add_seconds(d, seconds=1):
     return d + relativedelta(seconds=seconds)
 
 
-uptime = lambda start=psutil.boot_time(): time.time() - start
+# uptime = lambda start=psutil.boot_time(): time.time() - start
 
 
-def exception_logger(func, log):
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except Exception:
-            log.exception(f'Error in {func} method', stack_info=True)
-
-    return wrapper
+# def exception_logger(func, log):
+#    def wrapper(*args, **kwargs):
+#        try:
+#            return func(*args, **kwargs)
+#        except Exception:
+#            log.exception(f'Error in {func} method', stack_info=True)
+#
+#    return wrapper
